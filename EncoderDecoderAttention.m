@@ -1,0 +1,36 @@
+function output = EncoderDecoderAttention(enc_output, dec_output, numHeads, pad_idx, d_k, d_v, params, encoderInput)
+batch_size = size(dec_output, 1);
+len_q = size(dec_output, 2);
+len_k = size(enc_output, 2);
+len_v = size(enc_output, 2);
+dec_output = permute(dec_output, [2, 3, 1]);
+enc_output = permute(enc_output, [2, 3, 1]);
+q = pagemtimes(dec_output, params.enc_dec.Wq);
+k = pagemtimes(enc_output, params.enc_dec.Wk);
+v = pagemtimes(enc_output, params.enc_dec.Wv);
+
+q = reshape(q, [batch_size, len_q, numHeads, d_k]);
+k = reshape(k, [batch_size, len_k, numHeads, d_k]);
+v = reshape(v, [batch_size, len_v, numHeads, d_v]);
+q = permute(q, [2, 4, 3, 1]);
+k = permute(k, [2, 4, 3, 1]);
+v = permute(v, [2, 4, 3, 1]);
+q = reshape(q, [len_q, d_k, batch_size * numHeads]);
+k = reshape(k, [len_k, d_k, batch_size * numHeads]);
+v = reshape(v, [len_v, d_v, batch_size * numHeads]);
+mask = get_pad_mask(encoderInput, pad_idx);
+mask = repmat(reshape(mask, [batch_size, 1, len_k]), numHeads, 1, 1);
+scores = pagemtimes(q, 'none', k, 'transpose') / sqrt(d_k);
+scores = permute(scores, [3, 1, 2]);
+scores = scores + (mask * -1e9);
+attentionWeights = stable_softmax(scores);
+attentionWeights = permute(attentionWeights, [1, 3, 2]);
+attentionWeights = permute(attentionWeights, [3, 2, 1]);
+attention = pagemtimes(attentionWeights, v);
+attention = permute(attention, [3, 1, 2]);
+attention = reshape(attention, [batch_size, numHeads, len_q, d_v]);
+attention = permute(attention, [1, 3, 2, 4]);
+attention = reshape(attention, [batch_size, len_q, numHeads * d_v]);
+attention = permute(attention, [2, 3, 1]);
+output = pagemtimes(attention, params.enc_dec.Wo);
+end
