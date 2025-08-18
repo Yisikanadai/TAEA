@@ -1,2 +1,2 @@
 # TAEA
-Transformer-Aware Depth-Adaptive Autoencoder-Embedded Evolutionary Algorithm for Scheduling Energy-Minimized Tasks
+Transformer-Aware Depth-Adaptive Autoencoder-Embedded Evolutionary Algorithm for Energy-Minimized Deadline-constrained Task Scheduling
