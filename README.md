@@ -67,16 +67,16 @@ The scripts in `scripts/` provide the main entry points of the project:
   Trains the RL-based model.
 
 * `train_trans_aco_demo.m`
-  Trains the Transformer-based model under the ACO setting.
+  Trains the Transformer-based model for task allocation.
 
 * `train_trans_seq_demo.m`
-  Trains the Transformer-based sequential model.
+  Trains the Transformer-based model for task sequence.
 
 ## Notes
 
 1. Make sure the required MATLAB environment and toolboxes are installed before running the scripts.
 2. Check the paths to benchmark data, pretrained models, and output folders before training or testing.
-3. Pretrained models can be placed under `data/pretrained/` for direct evaluation or fine-tuning.
+3. Pretrained models can be placed under `data/pretrained/` for direct evaluation.
 
 ## Citation
 
